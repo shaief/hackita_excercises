@@ -24,7 +24,7 @@ def handle_list():
 			m = i*j
 			multi+=("<td>%d</td>" % m)
 		multi+=("</tr>")
-	final = '<table>'+multi+'</table>'
+	final = '<table border="1">'+multi+'</table>'
 	return final
 
 run(host='localhost', port=8080, debug = True, reloader=True)
