@@ -22,7 +22,7 @@ def handle_list():
 		multi+=("<tr>")
 		for j in range(1,n+1):
 			m = i*j
-			multi+=("<td align=right>%d</td>" % m)
+			multi+=("<td>%d</td>" % m)
 		multi+=("</tr>")
 	final = '<table border="1">'+multi+'</table>'
 	return final
