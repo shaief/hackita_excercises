@@ -46,11 +46,14 @@ def handle_list():
 	full_name = df[df.ISO3166A2 == user_country_name].ISOen_name.values[0]
 	continent = df[df.ISO3166A2 == user_country_name].continent.values[0]
 	subcontinent = df[df.ISO3166A2 == user_country_name].subcontinent.values[0]
+	capital = df[df.ISO3166A2 == user_country_name].UNen_capital.values[0]
 	population = df[df.ISO3166A2 == user_country_name].population.values[0]
 	lon = df[df.ISO3166A2 == user_country_name].longitude.values[0]
 	lat = df[df.ISO3166A2 == user_country_name].latitude.values[0]
 	gov = df[df.ISO3166A2 == user_country_name].url_gov.values[0]
 	gis = df[df.ISO3166A2 == user_country_name].url_gis.values[0]
+	post = df[df.ISO3166A2 == user_country_name].url_post.values[0]
+	stats = df[df.ISO3166A2 == user_country_name].url_stats.values[0]
 	closest = closest_dist_from_state(df,user_country_name)
 	print user_country_name
 	return '''
@@ -59,11 +62,16 @@ def handle_list():
 		Short name: {}</br>
 		Continent: {}</br>
 		Sub continent: {}</br>
+		Capital: {}</br>
 		Population: {:0,d} people</br>
 		Lon/Lat: {:0.3f}/{:0.3f}</br>
 		Closest state: {}</br>
 		Governmental url: <a href="{}">{}</a></br>
-		GIS url: <a href="{}">{}</a>
-		'''.format(full_name, full_name, user_country_name, continent, subcontinent, population, lon, lat, closest, gov, gov, gis, gis)
+		GIS url: <a href="{}">{}</a></br>
+		Post agency url: <a href="{}">{}</a></br>
+		Statistics bureau url: <a href="{}">{}</a></br>
+		<img src="http://flagpedia.net/data/flags/normal/{}.png" height="200"></br>
+		<a href="http://localhost:8080">Choose different country</a>
+		'''.format(full_name, full_name, user_country_name, continent, subcontinent, capital, population, lon, lat, closest, gov, gov, gis, gis, post, post, stats, stats, user_country_name.lower())
 
 run(host='localhost', port=8080, debug = True, reloader=True)
