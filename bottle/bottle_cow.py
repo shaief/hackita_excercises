@@ -5,16 +5,30 @@ import string
 
 page = "cow.txt"
 
+def closest_dist_from_state(data_csv, state_abv):
+	state_lat = data_csv[data_csv.ISO3166A2==state_abv].latitude.values[0]
+	state_lon = data_csv[data_csv.ISO3166A2==state_abv].longitude.values[0]
+	data_csv['dist_from'] = ((data_csv.latitude-state_lat)**2+(data_csv.longitude-state_lon)**2)**0.5
+	return data_csv[data_csv.index == data_csv.dist_from.argsort()[1]].ISOen_name.values[0]
+
+
 # open csv file as pandas data frame:
 df = pd.read_csv(page,skiprows = 28,sep = ";")
+#Arrange pandas data frame as lists
 states_short_names = df.ISO3166A2.values[:]
 states_full_names = df.ISOen_name.values[:]
+# Create an html series in pandas data frame
 df['html_text'] = "<option value="+df.ISO3166A2+">"+df.ISOen_name+"</option>"
+# Create a long html string from lists
 states_html_text = "".join(str(df.html_text.values.tolist()))
 
+@route('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='static')
+
+# Drop down menu of countries names
 @get('/')
 def list_form():
- 
 	return """
 	<h4>Please choose a country you would like to get some information about:</h4>
 	<form method="post">
@@ -24,7 +38,8 @@ def list_form():
 	<input type=submit value="Yalla">
 	</form>
 	""" % states_html_text
- 
+
+# Show user request as html page
 @post('/')
 def handle_list():
 	user_country_name = request.forms.countries
@@ -36,6 +51,7 @@ def handle_list():
 	lat = df[df.ISO3166A2 == user_country_name].latitude.values[0]
 	gov = df[df.ISO3166A2 == user_country_name].url_gov.values[0]
 	gis = df[df.ISO3166A2 == user_country_name].url_gis.values[0]
+	closest = closest_dist_from_state(df,user_country_name)
 	print user_country_name
 	return '''
 		<title>Data for {}</title>
@@ -43,10 +59,11 @@ def handle_list():
 		Short name: {}</br>
 		Continent: {}</br>
 		Sub continent: {}</br>
-		Population: {} people</br>
+		Population: {:0,d} people</br>
 		Lon/Lat: {:0.3f}/{:0.3f}</br>
+		Closest state: {}</br>
 		Governmental url: <a href="{}">{}</a></br>
 		GIS url: <a href="{}">{}</a>
-		'''.format(full_name, full_name, user_country_name, continent, subcontinent, population, lon, lat, gov, gov, gis, gis)
+		'''.format(full_name, full_name, user_country_name, continent, subcontinent, population, lon, lat, closest, gov, gov, gis, gis)
 
 run(host='localhost', port=8080, debug = True, reloader=True)
