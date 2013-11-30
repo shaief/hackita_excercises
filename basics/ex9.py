@@ -1,14 +1,27 @@
-print "enter a string: "
-user_string = raw_input()
-char_dict = {}
-for s in user_string:
-    if s not in char_dict:
-        char_dict[s]=0
-    char_dict[s] += 1
-print char_dict
+# first option:
+import sys
+import operator
+# open the text.txt file
+f = open('book.txt', 'r')
+#read the text.txt into a string
+booktxt = f.read()
 
+bookwords = booktxt.split()
+
+words = {}
+
+for word in bookwords:
+	if (word.lower() not in words):
+		words[word.lower()] = 1
+	else:
+		words[word.lower()] +=1
+word_max = max(words.iteritems(),key=operator.itemgetter(1))[0]
+
+print "The word: '" + word_max + "' appeared: " +str(words[word_max]) + " times in the text"
+
+
+# second option:
 import collections
-count_dict = collections.Counter()
-for s in user_string:
-    count_dict[s] += 1
-print count_dict
+import re
+words = re.findall(r'\w+', open('book.txt').read().lower())
+print collections.Counter(words).most_common(5)
